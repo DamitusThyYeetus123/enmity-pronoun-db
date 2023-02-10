@@ -1,11 +1,18 @@
 {
-   "name": "SilentTyping",
+   "name": "PronounDB",
    "version": "1.0.0",
-   "description": "Silences your typing indicator.",
+   "release": "stable",
+   "description": "Displays a Pronoun from PronounDB next to your name in the chat :3",
    "authors": [
       {
-         "name": "eternal",
-         "id": "263689920210534400"
+         "name": "Acquite<3",
+         "id": "581573474296791211"
       }
-   ]
+   ],
+   "plugin": {
+      "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
+      "repo": "https://github.com/acquitelol/enmity-pronoun-db",
+      "build": "patch-1.0.0"
+   },
+   "color": "#ff91ff"
 }
