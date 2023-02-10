@@ -28,7 +28,7 @@ async function getPronoun(id: string) {
     fetching = true;
     const data = await fetch(`https://pronoundb.org/api/v1/lookup-bulk?platform=discord&ids=${queue.splice(0, 15).join(",")}`, {
         method: "GET",
-        headers: { "Accept": "application/json", "X-PronounDB-Source": "Vendetta" }
+        headers: { "Accept": "application/json", "X-PronounDB-Source": "Enmity" }
     }).then(res => res.json());
 
     Object.entries(data).forEach(([id, pronoun]) => {
