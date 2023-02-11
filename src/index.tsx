@@ -85,7 +85,6 @@ const PronounDB: Plugin = {
              * Loops through every row and modifies either @arg Timestamp or @arg {OP/Bot Tag}
              */
             for ( const row of rows ) {
-                console.log(row)
                 if (bulkIfStatement(
                     /**
                      * If this is true, the @arg row is not a @arg message (different types)

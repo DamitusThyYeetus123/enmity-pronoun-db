@@ -13,7 +13,7 @@
    "plugin": {
       "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
       "repo": "https://github.com/acquitelol/enmity-pronoun-db",
-      "build": "patch-1.3.52"
+      "build": "patch-1.4.55"
    },
    "color": "#ff91ff"
 }
