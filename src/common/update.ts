@@ -75,7 +75,11 @@ async function checkForUpdates(): Promise<void> {
 const showUpdateDialog = (url: string, updateLabel: string, updateType: string): void => {
     Dialog.show({
         title: 'Update found',
-        body: `A newer ${updateType} is available for ${name}. ${updateType == 'build' ? `\nThe version will remain at ${version}, but the build will update to ${updateLabel}.` : ''}\nWould you like to install ${updateType} \`${updateLabel}\` now?`,
+        body: `A newer ${updateType} is available for ${name}. ${
+            updateType == 'build' 
+                ? `\nThe version will remain at ${version}, but the build will update to ${updateLabel}.` 
+                : ''
+        }\nWould you like to install ${updateType} \`${updateLabel}\` now?`,
         confirmText: 'Update',
         cancelText: 'Not now',
 
@@ -135,7 +139,7 @@ async function installPlugin(url: string, type: string, updateType: string): Pro
                          */
                         onConfirm: (): void => reload(),
                     })
-                : console.log(`[PronounDB] Plugin failed to update to ${updateType} ${type}.`);
+                : console.log(`[${name}] Plugin failed to update to ${updateType} ${type}.`);
         });
     }, [url, type, updateType], name, 'installing plugin at', 'new version available');
 }
