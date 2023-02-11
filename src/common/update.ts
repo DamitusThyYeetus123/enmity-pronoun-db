@@ -4,7 +4,6 @@
  * @param plugin: Information about the plugin such as build, download link, and repo
  * @param version: The current latest version of the plugin
  * @param Dialog: The dialog module, to open alerts in app.
- * @param REST: The rest API to fetch the latest build from GitHub
  * @param reload: Function to force a reload on Discord.
  */
 import { name, plugin, version } from '../../manifest.json';
@@ -142,8 +141,5 @@ async function installPlugin(url: string, type: string, updateType: string): Pro
 }
 
 export default {
-    checkForUpdates,
-    showUpdateDialog,
-    noUpdates,
-    installPlugin,
+    checkForUpdates
 };

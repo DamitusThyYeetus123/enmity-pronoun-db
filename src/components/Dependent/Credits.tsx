@@ -3,17 +3,17 @@
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Constants: Used for colors and font weight etc...
  * @param StyleSheet: Used to create style sheets for React components
- * @param {bulk, filters}: Used to import modules in bulk
+ * @param { getByProps }: Allows to get a module by its properties
  * @param TouchableOpacity: Adds an opacity effect upon pressing it.
  * @param View: Allows you to create a closure to place components inside of.
  * @param Image: Allows you to render an image from @arg require or an @arg uri.
  * @param Text: Allows you to render text.
- * @param { displayToast, Debug, FetchDebugArguments, ArrayOps.mapItem, shadow }: Functions which will be used throughout the script.
+ * @param { ArrayOps.mapItem, Miscellaneous.shadow }: Functions which will be used throughout the component.
  */
 import { React, Constants, StyleSheet } from 'enmity/metro/common';
-import { bulk, filters } from 'enmity/metro';
+import { getByProps } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text } from 'enmity/components';
-import { Debug, ArrayImplementations as ArrayOps, Miscellaneous } from '../../common';
+import { ArrayImplementations as ArrayOps, Miscellaneous } from '../../common';
 
 /** 
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
@@ -24,15 +24,68 @@ const Animated = window.enmity.modules.common.Components.General.Animated
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
- * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
-const [
-    Router,
-    Clipboard,
-] = bulk(
-    filters.byProps('transitionToGuild'),
-    filters.byProps('setString'),
-);
+const Router = getByProps('transitionToGuild')
+
+/**
+ * This is the main Style Sheet. All of the components used in this function will use this stylesheet.
+ * @param {(constant)any} styles: The main stylesheet.
+ */
+const styles = StyleSheet.createThemedStyleSheet({
+    /**
+     * Main container style. This would likely be used in the @arg View or @arg Subviews
+     */
+    container: {
+        marginTop: 25,
+        marginLeft: '5%',
+        marginBottom: -15,
+        flexDirection: "row"
+    },
+    /**
+     * Main style for the text container, to allow multiple @arg {<Text>} components to render inline.
+     */
+    textContainer: {
+        paddingLeft: 15,
+        paddingTop: 5,
+        flexDirection: 'column',
+        flexWrap: 'wrap',
+        ...Miscellaneous.shadow()
+    },
+    /**
+     * Style for the @arg {<Image>} component. Pretty self explanatory.
+     */
+    image: {
+        width: 75,
+        height: 75,
+        borderRadius: 10,
+        ...Miscellaneous.shadow()
+    },
+    /**
+     * Styles shared between the @arg Main text and the @arg Subtitle text.
+     */
+    mainText: {
+        opacity: 0.975,
+        letterSpacing: 0.25
+    },
+    /**
+     * Style used for only the @arg {Main Text} component. Involes an @arg bold weight and @arg primary color.
+     * Also involes a larger @arg fontSize and @arg letterSpacing
+     */
+    header: {
+        color: Constants.ThemeColorMap.HEADER_PRIMARY,
+        fontFamily: Constants.Fonts.DISPLAY_BOLD,
+        fontSize: 25,
+        letterSpacing: 0.25
+    },
+    /**
+     * Style used for only the @arg {Subtitle Text} components. Involes an @arg normal weight (@arg bold was omitted) and @arg secondary color.
+     * Additionally, the @arg fontSize is larger but not as large as @arg {Main Text} component
+     */
+    subHeader: {
+        color: Constants.ThemeColorMap.HEADER_SECONDARY,
+        fontSize: 12.75,
+    }
+});
 
  /** 
   * Main credits component.
@@ -44,66 +97,6 @@ const [
   * @property @param {object}: List of authors, their Discord ID, and their GitHub profile. This will be mapped and displayed on the list.
   */
 export default ({name, version, plugin, authors}): void => {
-    /**
-     * This is the main Style Sheet. All of the components used in this function will use this stylesheet.
-     * @param {(constant)any} styles: The main stylesheet.
-     */
-    const styles = StyleSheet.createThemedStyleSheet({
-        /**
-         * Main container style. This would likely be used in the @arg View or @arg Subviews
-         */
-        container: {
-            marginTop: 25,
-            marginLeft: '5%',
-            marginBottom: -15,
-            flexDirection: "row"
-        },
-        /**
-         * Main style for the text container, to allow multiple @arg {<Text>} components to render inline.
-         */
-        textContainer: {
-            paddingLeft: 15,
-            paddingTop: 5,
-            flexDirection: 'column',
-            flexWrap: 'wrap',
-            ...Miscellaneous.shadow()
-        },
-        /**
-         * Style for the @arg {<Image>} component. Pretty self explanatory.
-         */
-        image: {
-            width: 75,
-            height: 75,
-            borderRadius: 10,
-            ...Miscellaneous.shadow()
-        },
-        /**
-         * Styles shared between the @arg Main text and the @arg Subtitle text.
-         */
-        mainText: {
-            opacity: 0.975,
-            letterSpacing: 0.25
-        },
-        /**
-         * Style used for only the @arg {Main Text} component. Involes an @arg bold weight and @arg primary color.
-         * Also involes a larger @arg fontSize and @arg letterSpacing
-         */
-        header: {
-            color: Constants.ThemeColorMap.HEADER_PRIMARY,
-            fontFamily: Constants.Fonts.DISPLAY_BOLD,
-            fontSize: 25,
-            letterSpacing: 0.25
-        },
-        /**
-         * Style used for only the @arg {Subtitle Text} components. Involes an @arg normal weight (@arg bold was omitted) and @arg secondary color.
-         * Additionally, the @arg fontSize is larger but not as large as @arg {Main Text} component
-         */
-        subHeader: {
-            color: Constants.ThemeColorMap.HEADER_SECONDARY,
-            fontSize: 12.75,
-        }
-    });
-
     /** 
      * Use React to create a new Ref with @arg Animated
      * @param {React.useRef} animatedButtonScale: The main animation scale ref.
@@ -258,17 +251,6 @@ export default ({name, version, plugin, authors}): void => {
                          * @uses @arg {flexDirection: 'row'}
                          */
                         style={{flexDirection: 'row'}}
-
-                        /**
-                         * As this function copies @arg all of the debug arguments to clipboard, it fetches them from an @async function
-                         * @param options: The list of debug elements, which are all passed to the @func Debug.debugInfo function.
-                         * @func displayToast: Shows a toast saying that the text provided has been copied to clipboard.
-                         */
-                        onPress={async function() {
-                            const options = await Debug.fetchDebugArguments()
-                            Clipboard.setString(await Debug.debugInfo(options));
-                            Miscellaneous.displayToast('debug information', 'clipboard')
-                        }}
                     >
                         {/**
                          * Inner text of the @arg {<TouchableOpacity>}.

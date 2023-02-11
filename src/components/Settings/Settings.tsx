@@ -1,75 +1,84 @@
-import { StyleSheet, Constants, React, Storage, Toasts } from "enmity/metro/common";
+/**
+ * Imports
+ * @param Constants: Used to get Colors or Fonts etc from Discord's Constants
+ * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
+ * @param StyleSheet: Used to create style sheets for React components
+ * @param {* from enmity/components}: ReactNative components used inside of the settings panel
+ * @param { getBoolean, set }: Allows for getting and setting booleans for a settings store.
+ * @param Credits: The main Credits component
+ * @param SectionWrapper: An implementation similar to FormSection but anything is renderable.
+ * @param Icons: Icons used throughout the component
+ * @param Miscellaneous: Random methods and constants that may be useful
+ * @param Updater: Allows to search for updates for @arg PronounDB.
+ */
+import { StyleSheet, Constants, React } from "enmity/metro/common";
 import { FormRow, View, Text, ScrollView, FormDivider, FormSwitch, Image } from "enmity/components";
-import { get, getBoolean, set } from "enmity/api/settings";
+import { getBoolean, set } from "enmity/api/settings";
 import Credits from "../Dependent/Credits";
 import SectionWrapper from "../Dependent/SectionWrapper";
-import { Icons, Miscellaneous, ArrayImplementations as ArrayOps, Updater } from "../../common";
-import { renderActionSheet } from "../Modals/DebugInfoActionSheet";
-import { bulk, filters } from "enmity/metro";
+import { Icons, Miscellaneous, Updater } from "../../common";
+import { getByProps } from "enmity/metro";
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
- * @param Clipboard: This is used to copy any string to clipboard with @arg Clipboard.setString ~
  */
-const [
-   Router,
-   Clipboard,
-   LazyActionSheet
-] = bulk(
-   filters.byProps('transitionToGuild'),
-   filters.byProps('setString'),
-   filters.byProps("openLazy", "hideActionSheet")
-);
+const Router = getByProps('transitionToGuild')
 
+/**
+ * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
+ */
+const styles = StyleSheet.createThemedStyleSheet({
+   /**
+    * @param {object} icon: Global style for icons to give them a neutral color scheme and ensure they fit together well.
+    */
+   icon: {
+       color: Constants.ThemeColorMap.INTERACTIVE_NORMAL
+   },
+   /**
+    * @param {object} item: Style for trailing text to give it the Muted color, and contrast the normal colour of the text.
+    */
+   item: {
+       color: Constants.ThemeColorMap.TEXT_MUTED,
+       fontFamily: Constants.Fonts.PRIMARY_MEDIUM
+   },
+   /**
+    * @param {object} container: Main style for a rounded container for creating custom FormSection implementations.
+    */
+   container: {
+       width: '90%',
+       marginLeft: '5%',
+       borderRadius: 10,
+       backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
+       ...Miscellaneous.shadow() /** @param shadow: Main shadow implementation */
+   },
+   /**
+    * @param {object} subheaderText: Main styling for the text right at the bottom of the settings page, showing build and release channel.
+    */
+   subheaderText: {
+       color: Constants.ThemeColorMap.HEADER_SECONDARY,
+       textAlign: 'center',
+       margin: 10,
+       marginBottom: 50,
+       letterSpacing: 0.25,
+       fontFamily: Constants.Fonts.PRIMARY_BOLD,
+       fontSize: 14
+   },
+   image: {
+      width: "100%",
+      height: 60,
+      borderRadius: 10
+   }
+});
 
+/**
+ * Main @arg Settings page implementation
+ * @param manifest: The main plugin manifest passed donw as a prop.
+ */
 export default ({ manifest }) => {
    /**
-     * @param {StyleSheet} styles: The main stylesheet for the items in the UI.
-     */
-   const styles = StyleSheet.createThemedStyleSheet({
-      /**
-       * @param {object} icon: Global style for icons to give them a neutral color scheme and ensure they fit together well.
-       */
-      icon: {
-          color: Constants.ThemeColorMap.INTERACTIVE_NORMAL
-      },
-      /**
-       * @param {object} item: Style for trailing text to give it the Muted color, and contrast the normal colour of the text.
-       */
-      item: {
-          color: Constants.ThemeColorMap.TEXT_MUTED,
-          fontFamily: Constants.Fonts.PRIMARY_MEDIUM
-      },
-      /**
-       * @param {object} container: Main style for a rounded container for creating custom FormSection implementations.
-       */
-      container: {
-          width: '90%',
-          marginLeft: '5%',
-          borderRadius: 10,
-          backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_SECONDARY,
-          ...Miscellaneous.shadow() /** @param shadow: Main shadow implementation */
-      },
-      /**
-       * @param {object} subheaderText: Main styling for the text right at the bottom of the settings page, showing build and release channel.
-       */
-      subheaderText: {
-          color: Constants.ThemeColorMap.HEADER_SECONDARY,
-          textAlign: 'center',
-          margin: 10,
-          marginBottom: 50,
-          letterSpacing: 0.25,
-          fontFamily: Constants.Fonts.PRIMARY_BOLD,
-          fontSize: 14
-      },
-      image: {
-         width: "100%",
-         height: 60,
-         borderRadius: 10
-      }
-   });
-   
+    * @param {Getter, Setter}: Whether the preview image should show the timestamp or the op tag mode.
+    */
    const [timestampPreview, setTimestampPreview] = React.useState(getBoolean(manifest.name, "isTimestamp", false))
 
    return <ScrollView>
@@ -120,7 +129,7 @@ export default ({ manifest }) => {
          </>} />
          <SectionWrapper label='Preview' component={<>
             {/**
-               * The main section of available options to be selected by the User.
+               * The main image preview, which is either a timestamp or tag pronoun preview.
                */}
             <View style={styles.container}>
                   <Image
@@ -136,101 +145,6 @@ export default ({ manifest }) => {
                            }`
                      }}
                      resizeMode={"contain"}
-                  />
-            </View>
-         </>} />
-         {/**
-          * The main "utility section" of the settings panel. This section is where the user can:
-                  * @arg {copy full debug log to clipboard}
-                  * @arg {clear any stores of data that might have been saved throughout plugin lifetime} 
-            * This is wrapped in an @arg SectionWrapper which works similar to an @arg FormSection but allows you to render any styling.
-         */}
-         <SectionWrapper label='Utility' component={<>
-            {/**
-               * The main section of available options to be selected by the User.
-               */}
-            <View style={styles.container}>
-                  {/**
-                   * The main debug info log. This would allow the user to copy a part or the entire log to clipboard.
-                   * @uses @param {number} Icons.Copy: The @arg toast initialisation icon.
-                   * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
-                   */}
-                  <FormRow
-                     label='Open Debug Info'
-                     subLabel={`Open useful page to copy debug information like version and build of ${manifest.name} to clipboard.`}
-                     onLongPress={() => Miscellaneous.displayToast(`Copy the full debug log to clipboard including ${manifest.name}'s Version, Build, and Release, Enmity's Version and Build, etc.`, 'tooltip')}
-                     leading={<FormRow.Icon style={styles.icon} source={Icons.Copy} />}
-                     trailing={() => <FormRow.Arrow />}
-                     onPress={() => {
-                        /**
-                           * Opens an @arg ActionSheet to the user and passes an onConfirm and type of @arg Copy because this is inside Settings, not the Command.
-                           */
-                        renderActionSheet((debugLog: string, type: string) => {
-                              /**
-                               * This closes the current ActionSheet.
-                               * @param LazyActionSheet.hideActionSheet: Removes the top level action sheet.
-                               */
-                              LazyActionSheet.hideActionSheet()
-            
-                              /**
-                               * Set the full list of arguments wrapped in an @arg {debug} info function to format the message in a way that you can paste into Discord.
-                               */
-                              Clipboard.setString(debugLog);
-
-                              /**
-                               * Finally, show an @arg Toast informing the user that the debug information text has been copied to clipboard.
-                               */
-                              Miscellaneous.displayToast(`${type}`, 'clipboard')
-                        }, "copy" /* The type being "copy" means that it'll display Copy for all the parts such as Copy Message etc. */)
-                     }}
-                  />
-                  <FormDivider />
-                  {/**
-                   * The main clear state store button. This would allow the user to clear any state from the custom dialog implementations, clear their device list, and clear their agreement to the incompatible device notice.
-                   * @uses @param {number} Icons.Delete: The main @arg delete icon.
-                   * @uses @param {number} Icons.Settings.Toasts.Settings: The @arg tick icon.
-                   */}
-                  <FormRow
-                     label='Clear Stores'
-                     subLabel={`Void most of the settings and stores used throughout ${manifest.name} to store data locally.`}
-                     onLongPress={() => Miscellaneous.displayToast(`Clear stores and settings throughout ${manifest.name} including the settings to hide popups forever and the list of device codes.`, 'tooltip')}
-                     leading={<FormRow.Icon style={styles.icon} source={Icons.Delete} />}
-                     trailing={() => <FormRow.Arrow />}
-                     onPress={async function() {
-                        /**
-                           * Fetch any existing stored state inside of the @arg PronounDBStoreState array.
-                           * @param {object} storeItems: List of existing items in array form containing objects with name and type.
-                           */
-                        const storeItems: any = JSON.parse(get(manifest.name, "state_store", null) as string) ?? []
-
-                        /**
-                           * Loop through the stored items with a custom implementation of a forEach to allow for labels.
-                           * @uses @param {object} storeItems: List of items to clear the store of, which were explicitly set with the @arg store_item.ts file.
-                           */
-                        await ArrayOps.forItemAsync(storeItems, async function(item: any) {
-                              /**
-                               * Either removes the item or sets it to false depending on whether the item type is storage or not
-                               * @if {(@arg item.type) is equal to @arg {string} storage} -> Remove the item's name from storage.
-                               * @else {()} -> Set the item name to @arg {override} value or @arg false as a setting.
-                               */
-                              item.type==='storage'
-                                 ? await Storage.removeItem(item.name)
-                                 : set(manifest.name, item.name, item.override ?? false)
-                        }, 'clearing state store')
-
-                        /**
-                           * Remove the store to ensure it doesnt get cleared twice.
-                           */
-                        set(manifest.name, "state_store", null);
-
-                        /**
-                           * Finally, open an @arg Toast to notify the user that all of the stores have been cleared.
-                           */
-                        Toasts.open({ 
-                              content: `Cleared all ${manifest.name} stores.`, 
-                              source: Icons.Settings.Toasts.Settings 
-                        });
-                     }}
                   />
             </View>
          </>} />
@@ -257,9 +171,9 @@ export default ({ manifest }) => {
                      trailing={() => <FormRow.Arrow />}
                      onPress={ async function() {
                         /**
-                           * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented script located at src/commmon/update.ts 
-                           * This would check for any updates to the version or build and prompt the user to update if any are found.
-                           */
+                         * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented file located at src/commmon/update.ts 
+                         * This would check for any updates to the version or build and prompt the user to update if any are found.
+                         */
                         await Updater.checkForUpdates();
                      }}
                   />
@@ -276,9 +190,9 @@ export default ({ manifest }) => {
                      trailing={() => <FormRow.Arrow />}
                      onPress={() => {
                         /**
-                           * Simply opens the plugin repository externally to the user using the Router.
-                           * @uses @param {string} plugin.repo: The blob link of the plugin.
-                           */
+                         * Simply opens the plugin repository externally to the user using the Router.
+                         * @uses @param {string} plugin.repo: The blob link of the plugin.
+                         */
                         Router.openURL(manifest.plugin.repo)
                      }}
                   />
