@@ -34,22 +34,22 @@ const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
 
+/**
+ * @param styles: Main themed styleSheet for the OP tag background color
+ */
+const styles = StyleSheet.createThemedStyleSheet({
+    /**
+     * @param opTagBackgroundColor: The main color of the background of the OP-tag.
+     */
+    opTagBackgroundColor: {
+        color: Constants.ThemeColorMap.HEADER_PRIMARY
+    }
+})
+
 const PronounDB: Plugin = {
     ...manifest,
  
     onStart() {
-        /**
-         * @param styles: Main themed styleSheet for the OP tag background color
-         */
-        const styles = StyleSheet.createThemedStyleSheet({
-            /**
-             * @param opTagBackgroundColor: The main color of the background of the OP-tag.
-             */
-            opTagBackgroundColor: {
-                color: Constants.ThemeColorMap.HEADER_PRIMARY
-            }
-        })
-
         Patcher.before(UserStore, "getUser", (_, args, __) => {
             /**
              * @param {string} id: The main ID of the user
@@ -79,7 +79,7 @@ const PronounDB: Plugin = {
              * @param args: The list of predicates
              * @returns {boolean}
              */
-            const bulkIfStatement = (...args: any[]) => args.some(arg => arg);
+            const bulkIfStatement = (...args: any[]): boolean => args.some(arg => arg);
 
             /**
              * Loops through every row and modifies either @arg Timestamp or @arg {OP/Bot Tag}
@@ -154,11 +154,18 @@ const PronounDB: Plugin = {
     },
  
     onStop() {
-       Patcher.unpatchAll();
+        /**
+         * Unpatches all of the patches defined earlier.
+         */
+        Patcher.unpatchAll();
     },
  
     getSettingsPanel() {
-       return <Settings manifest={manifest} />;
+        /**
+         * Opens the main plugin settings panel
+         * @abstract Settings
+         */
+        return <Settings manifest={manifest} />;
     }
 };
  

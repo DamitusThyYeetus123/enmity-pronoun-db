@@ -96,7 +96,7 @@ const styles = StyleSheet.createThemedStyleSheet({
   * @property @param {object} plugin: Different data involving the plugin such as the plugin's base download link and build.
   * @property @param {object}: List of authors, their Discord ID, and their GitHub profile. This will be mapped and displayed on the list.
   */
-export default ({name, version, plugin, authors}): void => {
+export default ({name, version, plugin, authors}) => {
     /** 
      * Use React to create a new Ref with @arg Animated
      * @param {React.useRef} animatedButtonScale: The main animation scale ref.

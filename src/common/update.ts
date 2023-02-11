@@ -36,8 +36,8 @@ async function checkForUpdates(): Promise<void> {
          * @param {string} externalVersion: The current latest version externally. Example: @arg {1.1.5}
          * @param {string} externalBuild: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
-        const externalVersion = (content.match(/\d\.\d\.\d+/g) as object)[0];
-        const externalBuild = (content.match(/patch-\d\.\d\.\d+/g) as object)[0];
+        const externalVersion = (content.match(/\d+\.\d+\.\d+/g) as object)[0];
+        const externalBuild = (content.match(/patch-\d+\.\d+\.\d+/g) as object)[0];
 
         /**
          * Returns early if it cannot find either of the versions from online and show the noUpdate dialog
@@ -60,7 +60,7 @@ async function checkForUpdates(): Promise<void> {
          *
          */
         if (externalVersion != version) return showUpdateDialog(url, externalVersion, 'version');
-        if (externalBuild != plugin.build) return showUpdateDialog(url, externalBuild.split('-')[1], 'build');
+        if (externalBuild != plugin.build) return showUpdateDialog(url, externalBuild.split('-')[1].split("").reduce((acc, val) => acc += val.charCodeAt(0).toString(16), ""), 'build');
         return noUpdates(name, [version, plugin.build]);
     }, [plugin], name, 'checking if latest version at', 'the async check for updates callback');
 }
