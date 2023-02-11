@@ -174,7 +174,6 @@ export default ({ manifest }) => {
                          * Simply calls the @func Updater.checkForUpdates function asynchronously. This is a whole seperate documented file located at src/commmon/update.ts 
                          * This would check for any updates to the version or build and prompt the user to update if any are found.
                          */
-                        console.log("hi i exist")
                         await Updater.checkForUpdates();
                      }}
                   />
