@@ -1,19 +1,20 @@
 {
-   "name": "PronounDB",
-   "version": "1.1.0",
-   "release": "stable",
-   "description": "Displays a Pronoun from PronounDB next to your name in the chat :3",
-   "authors": [
-      {
-         "name": "Acquite<3",
-         "id": "581573474296791211",
-         "profile": "https://github.com/acquitelol"
-      }
-   ],
-   "plugin": {
-      "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
-      "repo": "https://github.com/acquitelol/enmity-pronoun-db",
-      "build": "patch-1.4.55"
-   },
-   "color": "#ff91ff"
+  "name": "PronounDB",
+  "version": "1.1.0",
+  "release": "stable",
+  "description": "Displays a Pronoun from PronounDB next to your name in the chat :3",
+  "authors": [
+    {
+      "name": "Acquite<3",
+      "id": "581573474296791211",
+      "profile": "https://github.com/acquitelol"
+    }
+  ],
+  "plugin": {
+    "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
+    "repo": "https://github.com/acquitelol/enmity-pronoun-db",
+    "build": "patch-1.4.56",
+    "hash": "dc5ab0d0"
+  },
+  "color": "#ff91ff"
 }

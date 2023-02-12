@@ -203,7 +203,7 @@ export default ({ manifest }) => {
        * Renders a simple FormRow with a version and build to display to the user. This is unnecessary as there as multiple ways to view this but it adds slightly more polish to the Settings Panel.
        */}
       <Text style={styles.subheaderText}>
-         {`Build: (${(manifest.plugin.build).split('-')[1].split("").reduce((acc, val) => acc += val.charCodeAt(0).toString(16), "")}) Release: (${manifest.release})`}
+         {`Build: (${manifest.plugin.hash}) Release: (${manifest.release})`}
       </Text>
    </ScrollView>
 }
