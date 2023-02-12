@@ -14,7 +14,7 @@
     "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
     "repo": "https://github.com/acquitelol/enmity-pronoun-db",
     "build": "patch-1.4.56",
-    "hash": "dc5ab0d0"
+    "hash": "637f7c07"
   },
   "color": "#ff91ff"
 }

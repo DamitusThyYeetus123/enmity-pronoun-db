@@ -37,7 +37,7 @@ async function checkForUpdates(): Promise<void> {
          * @param {string} externalBuild: The current latest build externally. Example: @arg {patch-1.2.8}. This would be then shortened into a simpler string: @arg {1.2.8}
          */
         const potentialExternalVersion = content.match(/\d+\.\d+\.\d+/g)
-        const potentialExternalHash = content.match(/hash:".*"/g)
+        const potentialExternalHash = content.match(/hash:"(.*?)"/)
 
         /**
          * Returns early if it cannot find either of the versions from online and show the noUpdate dialog
@@ -50,7 +50,7 @@ async function checkForUpdates(): Promise<void> {
          * Convert the versions into a normalized version and hash that can be compared
          */
         const externalVersion = potentialExternalVersion && potentialExternalVersion[0];
-        const externalHash = potentialExternalHash && potentialExternalHash[0].replace("hash:\"", "").replace('"', "")
+        const externalHash = potentialExternalHash && potentialExternalHash[1]
 
         /**
          * Checks if the external version and build match the current version and build. The latest version takes priority over the latest build. If neither are found, then show @arg noUpdates dialog.
