@@ -43,6 +43,12 @@ const styles = StyleSheet.createThemedStyleSheet({
      */
     opTagBackgroundColor: {
         color: Constants.ThemeColorMap.HEADER_PRIMARY
+    },
+    /**
+     * @param opTagTextColor: The main color of the background of the OP-tag.
+     */
+    opTagTextColor: {
+        color: Constants.ThemeColorMap.BACKGROUND_PRIMARY
     }
 })
 
@@ -135,7 +141,7 @@ const PronounDB: Plugin = {
                      * Afterwards set the @arg text and @arg background color to a @arg {processed and themed} color
                      * using the @arg background color to determine a @arg text color with a custom implementation.
                      */
-                    row.message.opTagTextColor = ReactNative.processColor(Miscellaneous.filterColor(styles.opTagBackgroundColor.color, "#212121", "#121212"));
+                    row.message.opTagTextColor = ReactNative.processColor(styles.opTagTextColor.color);
                     row.message.opTagBackgroundColor = ReactNative.processColor(styles.opTagBackgroundColor.color);
                 } else if (!row.message.tagText) {
                     /**

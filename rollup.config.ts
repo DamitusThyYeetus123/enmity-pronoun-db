@@ -35,8 +35,8 @@ async function readDirRecursive(folderPath: string): Promise<string[]> {
 }
 
 (async function main() {
-   manifest.plugin.hash = `${await calculateHash("src")}`
-   fs.writeFileSync("./manifest.json", JSON.stringify(manifest, null, 2))
+    manifest.plugin.hash = `${await calculateHash("src")}`
+    fs.writeFileSync("./manifest.json", JSON.stringify(manifest, null, 3))
 })()
 
 export default defineConfig({
