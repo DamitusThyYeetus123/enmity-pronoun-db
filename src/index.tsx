@@ -3,7 +3,7 @@ import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { getBoolean } from 'enmity/api/settings';
-import { PronounManager as PM, ArrayImplementations as ArrayOps, Bulk } from './common';
+import { PronounManager as PM, ArrayImplementations as ArrayOps } from './common';
 import manifest from "../manifest.json"
 import Settings from './components/Settings/Settings';
 import { findInReactTree } from "enmity/utilities"
@@ -50,30 +50,29 @@ const PronounDB: Plugin = {
         });
 
         Patcher.after(UserProfile.default, "type", (_, __, res) => {
-            const profileCardSection = findInReactTree(res, r => Bulk.allIfStatement(
-                r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string"),
-                r?.type?.displayName === "View",
-                Array.isArray(r?.props?.style)
-            ))?.props?.children
+            const profileCardSection = findInReactTree(res, r => 
+                r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string")
+                || r?.type?.displayName === "View"
+                || Array.isArray(r?.props?.style)
+            )?.props?.children
 
             if (!profileCardSection) return res;
 
             const { userId } = profileCardSection?.find((r: any) => typeof r?.props?.displayProfile?.userId === "string")?.props?.displayProfile ?? {};
 
-            if (Bulk.anyIfStatement(
-                /**
+            if (/**
                  * If this is true, @arg userId was not found.
                  */
-                !userId,
+                !userId
                 /**
                  * If this is true, @arg userId was found but it is not in the @PronounManager map.
                  */
-                !PM.map[userId],
+                || !PM.map[userId]
                 /**
                  * If this is true, @arg userId was found and is in the @PronounManager map but the @pronoun is @unspecified
                  */
-                PM.referenceMap[PM.map[userId]] === "unspecified"
-            )) return res
+                || PM.referenceMap[PM.map[userId]] === "unspecified"
+            ) return res
 
             /**
              * @param {string} pronoun: The main pronoun in @plainText ~ This *should not be undefined*
@@ -87,24 +86,23 @@ const PronounDB: Plugin = {
             const rows = JSON.parse(args[1]);
 
             for ( const row of rows ) {
-                if (Bulk.anyIfStatement(
-                    /**
+                if (/**
                      * If this is true, the @arg row is not a @arg message (different types)
                      */
-                    row.type !== 1, 
+                    row.type !== 1
                     /** 
                      * If this is true, the @arg row does not have a valid @arg {Author ID}. 
                      */
-                    !row?.message?.authorId, 
+                    || !row?.message?.authorId
                     /**
                      * If this is true, the @arg row has a valid @arg {Author ID}, but it is not in the map which means it hasn't been fetched yet.
                      */
-                    !PM.map[row?.message?.authorId],
+                    || !PM.map[row?.message?.authorId]
                     /**
                      * If this is true, this means @arg row has a valid @arg {Author ID}, and it is in the map, but the pronoun is @arg unspecified.
                      */
-                    PM.referenceMap[PM.map[row?.message?.authorId]] === "unspecified"
-                )) continue;
+                    || PM.referenceMap[PM.map[row?.message?.authorId]] === "unspecified"
+                ) continue;
 
                 /**
                  * @param {string} pronoun: The main pronoun in @plainText ~ This *should not be undefined*

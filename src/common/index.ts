@@ -44,14 +44,6 @@ import Updater from "./update";
 import PronounManager from './pronouns';
 
 /**
- * @param Bulk: Module allowing to pass any amount of arguments and allows to either check if any are true or if all are true
- * 
- * @param anyIfStatement: Returns true if @any of the args are true
- * @param allIfStatement: Returns true if @all of the args are true
- */
-import Bulk from './bulk';
-
-/**
  * Finally, export all of these functions. Other components in the code will be able to access these methods by accessing @arg index.ts afterwards
  */
 export {
@@ -60,6 +52,5 @@ export {
     tryCallback,
     Icons,
     Updater,
-    PronounManager,
-    Bulk
+    PronounManager
 };
