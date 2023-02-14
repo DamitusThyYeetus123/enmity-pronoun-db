@@ -46,7 +46,7 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
 /**
  * @param UserStore: Variable to allow getting the current user
  */
-const UserStore = getByProps("getCurrentUser")
+const UserStore = getByProps("getUser", "getCurrentUser")
 
 /**
  * @param localizedImage: Uses either the current user's profile picture if UserStore.getCurrentUser is defined or my profile picture if it isn't.

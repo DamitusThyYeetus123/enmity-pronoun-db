@@ -37,7 +37,7 @@ const Patcher = create("pronoun-db")
  * @param ReactNative: Main ReactNative implementation
  * @param DCDChatManager: Allows to patch @arg updateRows which lets me modify the stringified json of a message in the chat area.
  */
-const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET")
+const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET", "SECONDARY_INFO_TOP_MARGIN", "SIDE_PADDING")
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
@@ -90,7 +90,7 @@ const PronounDB: Plugin = {
                 * @arg one of its @props.children contains a userId which is a string,
                 * @arg the @type.displayName is identical to "View"
                 * @arg props.style is an @array ( it is an @array of @objects )
-             */
+                */
             const profileCardSection = findInReactTree(res, r => Bulk.allIfStatement(
                 r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string"),
                 r?.type?.displayName === "View",
@@ -106,7 +106,7 @@ const PronounDB: Plugin = {
              * @param {string} userId: Attempts to get the @userId from the @aboutMe section's @displayProfile
              * This is all filled with @implementation {Optional Chaining} as a crash is unwanted.
              */
-            const userId = profileCardSection[0]?.props?.displayProfile?.userId
+            const { userId } = profileCardSection?.find((r: any) => typeof r?.props?.displayProfile?.userId === "string")?.props?.displayProfile ?? {};
 
             /**
              * Also @returns early if @any of the following return true
@@ -124,7 +124,10 @@ const PronounDB: Plugin = {
                  * If this is true, @arg userId was found and is in the @PronounManager map but the @pronoun is @unspecified
                  */
                 PM.referenceMap[PM.map[userId]] === "unspecified"
-            )) return res
+            )) {
+                console.log(`uid: ${userId}, map: ${PM.map[userId]}, ref: ${PM.referenceMap[PM.map[userId]]}`)
+                return res
+            }
 
             /**
              * @param {string} pronoun: The main pronoun in @plainText ~ This *should not be undefined*
@@ -136,7 +139,7 @@ const PronounDB: Plugin = {
              */
             profileCardSection.unshift(<Pronoun pronoun={pronoun} />)
         })
-
+        
         Patcher.before(DCDChatManager, "updateRows", (_, args, __) => {
             /**
              * @param rows: The main JSON object of the message
