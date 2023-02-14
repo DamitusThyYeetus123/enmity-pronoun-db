@@ -1,11 +1,3 @@
-/**
- * Imports
- * @param name: The name of the project, in this case being PronounDB
- * @param plugin: Information about the plugin such as build, download link, and repo
- * @param version: The current latest version of the plugin
- * @param Dialog: The dialog module, to open alerts in app.
- * @param reload: Function to force a reload on Discord.
- */
 import { name, plugin, version } from '../../manifest.json';
 import { Dialog } from 'enmity/metro/common';
 import { reload } from 'enmity/api/native';
@@ -17,19 +9,10 @@ import tryCallback from './try_callback';
  */
 async function checkForUpdates(): Promise<void> {
     await tryCallback(async function () {
-        /**
-         * Gets a valid installation URL to fetch and see if the version is latest
-         * @param {(constant)string} url: The url of the plugin to install.
-         */
         const url = `${plugin.download}?${Math.floor(Math.random() * 1001)}.js`;
 
-        /**
-         * Gets the latest build source code as a string from the GitHub repo.
-         * @param {object} res: The object of all information fetched from the REST api.
-         * @param {string} content: The plugin source code as a string to check if the version is not the latest.
-         */
-        const res = await fetch(url);
-        const content = await res.text() as string;
+        const res: Response = await fetch(url);
+        const content: string = await res.text();
 
         /**
          * Gets the external version and build from the repo.
@@ -39,32 +22,12 @@ async function checkForUpdates(): Promise<void> {
         const potentialExternalVersion = content.match(/\d+\.\d+\.\d+/g)
         const potentialExternalHash = content.match(/hash:"(.*?)"/)
 
-        /**
-         * Returns early if it cannot find either of the versions from online and show the noUpdate dialog
-         * @if {(@param externalVersion is falsey) <OR> (@param externalBuild is falsey)} -> Return early and show @arg noUpdates dialog.
-         */
         if (!potentialExternalVersion && !potentialExternalHash)
             return failureUpdate(name, [version, plugin.build]);
 
-        /**
-         * Convert the versions into a normalized version and hash that can be compared
-         */
         const externalVersion = potentialExternalVersion && potentialExternalVersion[0];
         const externalHash = potentialExternalHash && potentialExternalHash[1]
 
-        /**
-         * Checks if the external version and build match the current version and build. The latest version takes priority over the latest build. If neither are found, then show @arg noUpdates dialog.
-         * @if {(@param potentialExternalVersion is not equal to @param version)} -> Show update dialog with new @arg version as the newer update.
-         * @elif {(@param potentialExternalHash is not equal to @param plugin.hash)} -> Show update dialog with new @arg build as the newer update.
-         * @else {()} -> Return @arg noUpdates dialog, showing there are no new updates.
-         *
-         * @function showUpdateDialog: Shows that an update is available.
-         * @arg {string} url: The url that the plugin will install with.
-         * @arg {string} potentialExternalVersion: The potential latest version that the plugin will use as text
-         * @arg {string} potentialExternalHash: The potential latest build that the plugin will use as text
-         * @arg {boolean}: Whether it's a version update or a build update.
-         *
-         */
         if (externalVersion && (externalVersion != version)) return showUpdateDialog(url, externalVersion, 'version');
         if (externalHash && (externalHash != plugin.hash)) return showUpdateDialog(url, externalHash, "build");
         return noUpdates(name, [version, plugin.hash]);
@@ -88,11 +51,6 @@ const showUpdateDialog = (url: string, updateLabel: string, updateType: string):
         }\nWould you like to install ${updateType} \`${updateLabel}\` now?`,
         confirmText: 'Update',
         cancelText: 'Not now',
-
-        /**
-         * Run the plugin install function.
-         * @returns {void}
-         */
         onConfirm: (): Promise<void> => installPlugin(url, updateLabel, updateType),
     });
 };
@@ -135,29 +93,19 @@ const failureUpdate = (name: string, [version, hash]: string[]): void => {
  * @returns {void}
  */
 async function installPlugin(url: string, type: string, updateType: string): Promise<void> {
-    await tryCallback(async function () {
+    await tryCallback(async function() {
         /**
          * The main function to install a plugin, inside of Enmity. This function is not exported as a member in the Enmity library, so I have to manually import it.
          * @param {string} url: The link which is used to install the plugin
          * @param {string} data: The returned data which shows the state of the installation.
          * @ts-ignore */
         window.enmity.plugins.installPlugin(url, ({ data }) => {
-            /**
-             * Checks if @arg data is successful.
-             * @if {(@arg data is @arg installed_plugin or @arg overridden_plugin)} -> Show a new @arg Dialog with a prompt to restart Enmity.
-             * @else {()} -> Show an error log in @arg console describing that the plugin failed to update. This would only trigger if @arg data is @arg undefined or @arg fucky_wucky
-             */
             data == 'installed_plugin' || data == 'overridden_plugin'
                 ? Dialog.show({
                         title: `Updated ${name}`,
                         body: `Successfully updated to ${updateType} \`${type}\`. \nWould you like to reload Discord now?`,
                         confirmText: 'Reload',
                         cancelText: 'Not now',
-
-                        /**
-                         * Use the native @arg reload function to force crash Enmity.
-                         * @returns {void}
-                         */
                         onConfirm: (): void => reload(),
                     })
                 : console.log(`[${name}] Plugin failed to update to ${updateType} ${type}.`);

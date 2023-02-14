@@ -1,15 +1,5 @@
-/** 
- * Imports 
- * @param {string} name: The name from manifest.json.
- * @param tryCallback: Function to wrap another function in a try-catch
- * @param {function} Toasts: The function to open a toast on the screen
- * @param {object} Icons: The icons exported in ./Icons
- */
-import { name } from '../../manifest.json';
-import tryCallback from "./try_callback";
 import { Toasts } from "enmity/metro/common";
 import Icons from "./icons";
-import { getByProps } from 'enmity/metro';
 
 /**
  * @param shadow: Native shadow implementation that is used throughout the entire plugin.

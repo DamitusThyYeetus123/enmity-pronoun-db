@@ -1,10 +1,7 @@
-/**
- * @param getIDByName: Fetches the ID of an icon based on its name.
- */
 import { getIDByName } from 'enmity/api/assets';
 
 /** 
- * Icons used throughout PronounDB, available in a single place for ease of use.
+ * Icons used throughout @PronounDB which are available in a single place for ease of use.
  * @param {object} Icons: Object of Icons which are grouped by their place of use.
  */
 export default {
