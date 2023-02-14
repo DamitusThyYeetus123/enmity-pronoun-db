@@ -14,6 +14,7 @@ export default {
     Open:  getIDByName('ic_leave_stage'),
     Clipboard:  getIDByName('pending-alert'),
     Clock: getIDByName('clock'),
+    Pronoun: getIDByName('ic_profile_badge_guild_booster_lvl9'),
     Settings: {
         Toasts: {
             Settings: getIDByName('ic_selection_checked_24px'),
@@ -21,6 +22,8 @@ export default {
         },
         Initial: getIDByName('coffee'),
         Update: getIDByName("discover"),
-        Locale: getIDByName("ic_locale_24px"),
+        Locale: getIDByName('ic_locale_24px'),
+        External: getIDByName("ic_raised_hand_list"),
+        Edit: getIDByName("ic_edit_24px")
     }
 };

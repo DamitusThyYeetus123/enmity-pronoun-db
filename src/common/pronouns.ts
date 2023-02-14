@@ -42,7 +42,7 @@ export default {
         any: "any",
         other: "other",
         ask: "ask",
-        avoid: "avoid, use name",
+        avoid: "avoid pronouns, use name",
         unspecified: "unspecified"
     } as Record<string, string>,
 

@@ -10,15 +10,21 @@
  * @param Miscellaneous: Random methods and constants that may be useful
  * @param PronounManager: The main object containing all of the items required for PronounDB to function
  * @param ArrayImplementations: Main Custom Array Manipulation Implementations class which contains a bunch of static methods
+ * @param manifest: The main object containing important information about the plugin such as name, version, etc
+ * @param Settings: The main Settings page component
+ * @param {* from enmity/components}: Basic exported react native components that can be used
+ * @param findInReactTree: Allows to traverse a react tree and find a given object or value
  */
 import { getByProps } from 'enmity/metro';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { getBoolean } from 'enmity/api/settings';
-import { Miscellaneous, PronounManager as PM, ArrayImplementations as ArrayOps } from './common';
+import { PronounManager as PM, ArrayImplementations as ArrayOps, Bulk } from './common';
 import manifest from "../manifest.json"
 import Settings from './components/Settings/Settings';
+import { findInReactTree } from "enmity/utilities"
+import Pronoun from './components/Dependent/Pronoun';
 
 /**
  * @param Patcher: The main plugin's patcher to allow patching modules
@@ -26,10 +32,12 @@ import Settings from './components/Settings/Settings';
 const Patcher = create("pronoun-db")
 
 /**
+ * @param UserProfile: Top-level @component to patch for pronouns in the @profile :3
  * @param UserStore: Allows for getting a user, patched later
  * @param ReactNative: Main ReactNative implementation
  * @param DCDChatManager: Allows to patch @arg updateRows which lets me modify the stringified json of a message in the chat area.
  */
+const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET")
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
@@ -39,13 +47,13 @@ const { DCDChatManager } = ReactNative.NativeModules;
  */
 const styles = StyleSheet.createThemedStyleSheet({
     /**
-     * @param opTagBackgroundColor: The main color of the background of the OP-tag.
+     * @param {object} opTagBackgroundColor: The main color of the background of the OP-tag.
      */
     opTagBackgroundColor: {
         color: Constants.ThemeColorMap.HEADER_PRIMARY
     },
     /**
-     * @param opTagTextColor: The main color of the background of the OP-tag.
+     * @param {object} opTagTextColor: The main color of the background of the OP-tag.
      */
     opTagTextColor: {
         color: Constants.ThemeColorMap.BACKGROUND_PRIMARY
@@ -74,6 +82,61 @@ const PronounDB: Plugin = {
             PM.updateQueuedPronouns();
         });
 
+        Patcher.after(UserProfile.default, "type", (_, __, res) => {
+            /**
+             * Get the full object of items from the @user profile based on parameters that the object contains
+             * This would return an @array of @objects which include the @aboutMe and @note etc.
+             * The @filter itself searches for an object where:
+                * @arg one of its @props.children contains a userId which is a string,
+                * @arg the @type.displayName is identical to "View"
+                * @arg props.style is an @array ( it is an @array of @objects )
+             */
+            const profileCardSection = findInReactTree(res, r => Bulk.allIfStatement(
+                r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string"),
+                r?.type?.displayName === "View",
+                Array.isArray(r?.props?.style)
+            ))?.props?.children
+
+            /**
+             * @returns early if it cannot find a valid @object which fits all of the defined @conditions in the @func Bulk.allIfStatement.
+             */
+            if (!profileCardSection) return res;
+
+            /**
+             * @param {string} userId: Attempts to get the @userId from the @aboutMe section's @displayProfile
+             * This is all filled with @implementation {Optional Chaining} as a crash is unwanted.
+             */
+            const userId = profileCardSection[0]?.props?.displayProfile?.userId
+
+            /**
+             * Also @returns early if @any of the following return true
+             */
+            if (Bulk.anyIfStatement(
+                /**
+                 * If this is true, @arg userId was not found.
+                 */
+                !userId,
+                /**
+                 * If this is true, @arg userId was found but it is not in the @PronounManager map.
+                 */
+                !PM.map[userId],
+                /**
+                 * If this is true, @arg userId was found and is in the @PronounManager map but the @pronoun is @unspecified
+                 */
+                PM.referenceMap[PM.map[userId]] === "unspecified"
+            )) return res
+
+            /**
+             * @param {string} pronoun: The main pronoun in @plainText ~ This *should not be undefined*
+             */
+            const pronoun = PM.referenceMap[PM.map[userId]]
+
+            /**
+             * Otherwise ( thereof @finally ), insert the @Pronoun component at the top of the list.
+             */
+            profileCardSection.unshift(<Pronoun pronoun={pronoun} />)
+        })
+
         Patcher.before(DCDChatManager, "updateRows", (_, args, __) => {
             /**
              * @param rows: The main JSON object of the message
@@ -81,17 +144,10 @@ const PronounDB: Plugin = {
             const rows = JSON.parse(args[1]);
 
             /**
-             * Single use function which returns true if any any of its predicates are true
-             * @param args: The list of predicates
-             * @returns {boolean}
-             */
-            const bulkIfStatement = (...args: any[]): boolean => args.some(arg => arg);
-
-            /**
-             * Loops through every row and modifies either @arg Timestamp or @arg {OP/Bot Tag}
+             * Loops through every row and modifies either @arg Timestamp or @arg {OP Tag}
              */
             for ( const row of rows ) {
-                if (bulkIfStatement(
+                if (Bulk.anyIfStatement(
                     /**
                      * If this is true, the @arg row is not a @arg message (different types)
                      */
@@ -125,30 +181,25 @@ const PronounDB: Plugin = {
                 }
 
                 /**
-                 * Checks if there is no @arg { OP tagText }
-                 * If this is true, then it sets the @arg { OP tagText } to the pronoun
-                    * It also sets the @arg opTagTextColor and @arg opTagBackgroundColor which are iOS only properties. On android, you just won't see a difference.
-                 * Otherwise, it checks if there is no @arg { Bot tagText } and sets the pronoun to the bot tag if there isn't
-                 * Otherwise, it does nothing.
+                 * Checks if there is existing @arg opTagText
+                 * If there is, then it sets the tagText to either just the @arg opTagText or the existing @arg tagText with the @arg opTagText concatenated.
+                 * This uses the @implementation {Nullish coalescing assignment (??=)} to do this
                  */
-                if (!row.message.opTagText) {
-                    /**
-                     * Sets the @arg opTagText to the @var pronoun defined above.
-                     */
-                    row.message.opTagText = pronoun;
-
-                    /** 
-                     * Afterwards set the @arg text and @arg background color to a @arg {processed and themed} color
-                     * using the @arg background color to determine a @arg text color with a custom implementation.
-                     */
-                    row.message.opTagTextColor = ReactNative.processColor(styles.opTagTextColor.color);
-                    row.message.opTagBackgroundColor = ReactNative.processColor(styles.opTagBackgroundColor.color);
-                } else if (!row.message.tagText) {
-                    /**
-                     * Set the @arg tagText to the @var pronoun defined above.
-                     */
-                    row.message.tagText = pronoun
+                if (row.message.opTagText) {
+                    row.message.tagText = (row.message.tagText ? row.message.tagText + " • " : "") + row.message.opTagText
                 }
+
+                /**
+                 * Sets the @arg opTagText to the @var pronoun defined above, which should now be reassignable with no worries as whatever was there was moved to the bot tag.
+                 */
+                row.message.opTagText = pronoun;
+
+                /** 
+                 * Afterwards set the @arg text and @arg background color to a @arg {processed and themed} color
+                 * using the @arg background color to determine a @arg text color with a custom implementation.
+                 */
+                row.message.opTagTextColor = ReactNative.processColor(styles.opTagTextColor.color);
+                row.message.opTagBackgroundColor = ReactNative.processColor(styles.opTagBackgroundColor.color);
             }
     
             /**

@@ -31,12 +31,12 @@ const styles = StyleSheet.createThemedStyleSheet({
  * @param {string} label: The label for the wrapper, which will be displayed above the content inside of the component.
  * @param {TSX Fragment} component: The component to render inside of the @arg View.
  */
-export default ({label, component}) => {
+export default ({ label, children, style }: { label: string, children?: any, style?: any }) => {
     /**
      * Render a view with a margin at the top
      * @returns {View}
      */
-    return <View style={{marginTop: 10}}>
+    return <View style={[style, {marginTop: 10}]}>
         {/**
          * Renders a Text Component inside of this view with the label
          * @uses @param {string} label: The label provided when the component was called
@@ -45,6 +45,6 @@ export default ({label, component}) => {
         {/**
          * The component to render inside of this component. This can be any valid React Native code.
          */}
-        {component}
+        {children}
     </View>
 }

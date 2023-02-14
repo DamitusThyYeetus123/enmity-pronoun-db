@@ -3,6 +3,7 @@
  * @param React: The main React implementation to do functions such as @arg React.useState or @arg React.useEffect
  * @param Constants: Used for colors and font weight etc...
  * @param StyleSheet: Used to create style sheets for React components
+ * @param Profiles: Allows to show a @userProfile
  * @param { getByProps }: Allows to get a module by its properties
  * @param TouchableOpacity: Adds an opacity effect upon pressing it.
  * @param View: Allows you to create a closure to place components inside of.
@@ -10,7 +11,7 @@
  * @param Text: Allows you to render text.
  * @param { ArrayOps.mapItem, Miscellaneous.shadow }: Functions which will be used throughout the component.
  */
-import { React, Constants, StyleSheet } from 'enmity/metro/common';
+import { React, Constants, StyleSheet, Profiles } from 'enmity/metro/common';
 import { getByProps } from 'enmity/metro';
 import { TouchableOpacity, View, Image, Text } from 'enmity/components';
 import { ArrayImplementations as ArrayOps, Miscellaneous } from '../../common';
@@ -19,13 +20,18 @@ import { ArrayImplementations as ArrayOps, Miscellaneous } from '../../common';
  * This is the main 'Animated' component of React Native, but for some reason its not exported in Enmity's dependencies so I'm importing it manually.
  * @param Animated: The main 'Animated' component of React Native.
  * @ts-ignore */
-const Animated = window.enmity.modules.common.Components.General.Animated
+const { Animated } = window.enmity.modules.common.Components.General
 
 /** 
  * Main modules being fetched by the plugin to open links externally and copy text to clipboard
  * @param Router: This is used to open a url externally with @arg Router.openURL ~
  */
 const Router = getByProps('transitionToGuild')
+
+/**
+ * @param UserStore: Allows to get any @user or @currentUser easily
+ */
+const UserStore = getByProps("getUser", "getCurrentUser")
 
 /**
  * This is the main Style Sheet. All of the components used in this function will use this stylesheet.
@@ -124,10 +130,10 @@ export default ({name, version, plugin, authors}) => {
     }).start();
 
     /**
-     * Opens the Repository of @arg PronounDB externally, using the @arg Router provided before.
+     * Opens the @current user's profile based on their userId
      * @returns {void}
      */
-    const onPress = (): void => Router.openURL(plugin.repo);
+    const onPress = (): void => Profiles.showUserProfile({ userId: UserStore.getCurrentUser().id });
 
     /** 
      * The main animated style, which is going to be modified by the Animated property.
