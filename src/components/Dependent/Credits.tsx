@@ -185,7 +185,7 @@ export default ({name, version, plugin, authors}) => {
                              * The image used for the @arg Image.
                              * @param uri: Can be either an @arg URI, which is what is provided, or it can be an @arg require.
                              */
-                            uri: Miscellaneous.localizedImage, 
+                            uri: UserStore?.getCurrentUser()?.getAvatarURL()?.replace("webp", "png"), 
                         }}
                     />
                 </Animated.View>

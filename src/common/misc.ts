@@ -43,21 +43,8 @@ const displayToast = (source: string, type: 'clipboard' | 'tooltip'): void => {
     });
 };
 
-/**
- * @param UserStore: Variable to allow getting the current user
- */
-const UserStore = getByProps("getUser", "getCurrentUser")
-
-/**
- * @param localizedImage: Uses either the current user's profile picture if UserStore.getCurrentUser is defined or my profile picture if it isn't.
- */
-const localizedImage = UserStore.getCurrentUser()
-    ? UserStore.getCurrentUser().getAvatarURL().replace("webp", "png")
-    : "https://cdn.discordapp.com/avatars/581573474296791211/4429e2dbe2bfcfbd34fb1778c802144d.png?size=1280"
-
 export default 
 {
     shadow,
-    displayToast,
-    localizedImage
+    displayToast
 };

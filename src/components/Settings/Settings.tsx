@@ -71,7 +71,7 @@ const styles = StyleSheet.createThemedStyleSheet({
     */
    image: {
       width: "100%",
-      maxWidth: 350,
+      maxWidth: 500,
       borderRadius: 10
    }
 });
@@ -162,7 +162,7 @@ export default ({ manifest }) => {
                */}
             <View style={{
                ...styles.container,
-               maxWidth: 350
+               maxWidth: 500
             }}>
                {/**
                 * This custom "intelligent" image implementation allows for setting a @dynamic height based on a calculated @aspectRatio and a @width
@@ -182,7 +182,7 @@ export default ({ manifest }) => {
             <View style={{
                ...styles.container, 
                marginTop: 10,
-               maxWidth: 350
+               maxWidth: 500
             }}>
                {/**
                 * This custom "intelligent" image implementation allows for setting a @dynamic height based on a calculated @aspectRatio and a @width
