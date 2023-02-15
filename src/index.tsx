@@ -52,8 +52,8 @@ const PronounDB: Plugin = {
         Patcher.after(UserProfile.default, "type", (_, __, res) => {
             const profileCardSection = findInReactTree(res, r => 
                 r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string")
-                || r?.type?.displayName === "View"
-                || Array.isArray(r?.props?.style)
+                && r?.type?.displayName === "View"
+                && Array.isArray(r?.props?.style)
             )?.props?.children
 
             if (!profileCardSection) return res;
