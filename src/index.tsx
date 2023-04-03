@@ -28,6 +28,9 @@ const styles = StyleSheet.createThemedStyleSheet({
     },
     opTagTextColor: {
         color: Constants.ThemeColorMap.BACKGROUND_PRIMARY
+    },
+    mention: {
+        color: Constants.ThemeColorMap.BACKGROUND_MENTIONED_HOVER
     }
 })
 
@@ -86,6 +89,11 @@ const PronounDB: Plugin = {
             const rows = JSON.parse(args[1]);
 
             for ( const row of rows ) {
+                if (row.type === 1) {
+                    row.message.shouldShowRoleDot = true
+                    row.message.shouldShowRoleOnName = true
+                }
+
                 if (/**
                      * If this is true, the @arg row is not a @arg message (different types)
                      */
@@ -119,7 +127,7 @@ const PronounDB: Plugin = {
                         row.message.tagText 
                             ? row.message.tagText + " • " 
                             : ""
-                            + row.message.opTagText)
+                        + row.message.opTagText)
                 }
 
                 row.message.opTagText = pronoun;

@@ -6,8 +6,10 @@ import Credits from "../Dependent/Credits";
 import SectionWrapper from "../Dependent/SectionWrapper";
 import { Icons, Miscellaneous, Updater } from "../../common";
 import { getByProps } from "enmity/metro";
+import { version } from "enmity/api/native";
 
 const Router = getByProps('transitionToGuild')
+const optionalMargin = parseInt(version.split(".")[0]) > 163 ? 15 : 0;
 
 const styles = StyleSheet.createThemedStyleSheet({
    icon: {
@@ -25,13 +27,13 @@ const styles = StyleSheet.createThemedStyleSheet({
       ...Miscellaneous.shadow() /** @param shadow: Main shadow implementation */
    },
    subheaderText: {
-       color: Constants.ThemeColorMap.HEADER_SECONDARY,
-       textAlign: 'center',
-       margin: 10,
-       marginBottom: 50,
-       letterSpacing: 0.25,
-       fontFamily: Constants.Fonts.PRIMARY_BOLD,
-       fontSize: 14
+      color: Constants.ThemeColorMap.HEADER_SECONDARY,
+      textAlign: 'center',
+      margin: 10,
+      marginBottom: 50,
+      letterSpacing: 0.25,
+      fontFamily: Constants.Fonts.PRIMARY_BOLD,
+      fontSize: 14
    },
    image: {
       width: "100%",
@@ -74,6 +76,7 @@ export default ({ manifest }: { manifest: typeof import("../../../manifest.json"
                   leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Locale} />}
                   trailing={<FormSwitch
                      value={getBoolean(manifest.name, "isTimestamp", false)}
+                     style={{ marginLeft: -optionalMargin }}
                      onValueChange={() => {
                         set(manifest.name, "isTimestamp", !getBoolean(manifest.name, "isTimestamp", false))
                         setTimestampPreview(getBoolean(manifest.name, "isTimestamp", false))
@@ -88,6 +91,7 @@ export default ({ manifest }: { manifest: typeof import("../../../manifest.json"
                   leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Edit} />}
                   trailing={<FormSwitch
                      value={getBoolean(manifest.name, "isRole", true)}
+                     style={{ marginLeft: -optionalMargin }}
                      onValueChange={() => {
                         set(manifest.name, "isRole", !getBoolean(manifest.name, "isRole", true))
                         setRolePreview(getBoolean(manifest.name, "isRole", true))
@@ -130,7 +134,7 @@ export default ({ manifest }: { manifest: typeof import("../../../manifest.json"
                   subLabel={`Search for any ${manifest.name} updates and notify you if an update is available.`}
                   onLongPress={() => Miscellaneous.displayToast(`Search GitHub for any new version or build of ${manifest.name} and prompts you to update, and then prompts you to restart Enmity afterwards.`, 'tooltip')}
                   leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.Update} />}
-                  trailing={() => <FormRow.Arrow />}
+                  trailing={() => <FormRow.Arrow style={{ marginLeft: -optionalMargin }} />}
                   onPress={ async function() {
                      await Updater.checkForUpdates();
                   }}

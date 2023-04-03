@@ -1,6 +1,6 @@
 {
    "name": "PronounDB",
-   "version": "1.2.0",
+   "version": "1.2.1",
    "release": "stable",
    "description": "Displays a Pronoun from PronounDB next to your name in the chat :3",
    "authors": [
@@ -15,7 +15,7 @@
       "repo": "https://github.com/acquitelol/enmity-pronoun-db",
       "pronoundb": "https://pronoundb.org/",
       "build": "patch-1.4.56",
-      "hash": "b8567e66"
+      "hash": "3bc72aeb"
    },
    "color": "#ff91ff"
 }
