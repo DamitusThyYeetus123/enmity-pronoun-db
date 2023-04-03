@@ -8,7 +8,7 @@ import { Icons, Miscellaneous, Updater } from "../../common";
 import { getByProps } from "enmity/metro";
 import { version } from "enmity/api/native";
 
-const Router = getByProps('transitionToGuild')
+const Router = getByProps('transitionToGuild', "openURL")
 const optionalMargin = parseInt(version.split(".")[0]) > 163 ? 15 : 0;
 
 const styles = StyleSheet.createThemedStyleSheet({
