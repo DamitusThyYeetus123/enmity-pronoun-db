@@ -156,7 +156,7 @@ export default ({ manifest }: { manifest: typeof import("../../../manifest.json"
                   subLabel={`Open the ${manifest.name} website externally at \`https://pronoundb.org\`.`}
                   onLongPress={() => Miscellaneous.displayToast(`Opens the PronounDB website in an external page which allows you to link your Discord account to PronounDB.`, 'tooltip')}
                   leading={<FormRow.Icon style={styles.icon} source={Icons.Settings.External} />}
-                  trailing={() => <FormRow.Arrow />}
+                  trailing={() => <FormRow.Arrow style={{ marginLeft: -optionalMargin }} />}
                   onPress={() => {
                      Router.openURL(manifest.plugin.pronoundb)
                   }}
