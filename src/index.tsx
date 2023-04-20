@@ -11,13 +11,8 @@ import Pronoun from './components/Dependent/Pronoun';
 
 const Patcher = create("pronoun-db")
 
-/**
- * @param UserProfile: Top-level @component to patch for pronouns in the @profile :3
- * @param UserStore: Allows for getting a user, patched later
- * @param ReactNative: Main ReactNative implementation
- * @param DCDChatManager: Allows to patch @arg updateRows which lets me modify the stringified json of a message in the chat area.
- */
 const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET", "SECONDARY_INFO_TOP_MARGIN", "SIDE_PADDING")
+const UserProfileName = getByName("UserProfileName");
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
@@ -55,7 +50,7 @@ const PronounDB: Plugin = {
         Patcher.after(UserProfile.default, "type", (_, __, res) => {
             const profileCardSection = findInReactTree(res, r => 
                 r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string")
-                && !r?.props.children.find((e: any) => e.type === getByName("UserProfileName"))
+                && !r?.props.children.find((e: any) => e.type === UserProfileName)
                 && r?.type?.displayName === "View"
                 && Array.isArray(r?.props?.style)
             )?.props?.children
