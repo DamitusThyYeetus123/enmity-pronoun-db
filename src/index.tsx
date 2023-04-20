@@ -1,4 +1,4 @@
-import { getByProps } from 'enmity/metro';
+import { getByName, getByProps } from 'enmity/metro';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
 import { Constants, React, StyleSheet } from 'enmity/metro/common';
@@ -55,6 +55,7 @@ const PronounDB: Plugin = {
         Patcher.after(UserProfile.default, "type", (_, __, res) => {
             const profileCardSection = findInReactTree(res, r => 
                 r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string")
+                && !r?.props.children.find((e: any) => e.type === getByName("UserProfileName"))
                 && r?.type?.displayName === "View"
                 && Array.isArray(r?.props?.style)
             )?.props?.children
