@@ -11,7 +11,7 @@ export default {
     Open:  getIDByName('ic_leave_stage'),
     Clipboard:  getIDByName('pending-alert'),
     Clock: getIDByName('clock'),
-    Pronoun: getIDByName('ic_profile_badge_guild_booster_lvl9'),
+    Pronoun: getIDByName('ic_accessibility_24px'),
     Settings: {
         Toasts: {
             Settings: getIDByName('ic_selection_checked_24px'),

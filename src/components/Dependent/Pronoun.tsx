@@ -1,56 +1,41 @@
 import { getBoolean } from "enmity/api/settings";
 import { View, Text, TouchableOpacity } from "enmity/components";
 import { Constants, React, StyleSheet, Toasts } from "enmity/metro/common";
+import { getByName, getByProps } from "enmity/metro";
 import { Icons } from "../../common";
 import manifest from "../../../manifest.json"
 
+const { useThemeContext } = getByProps("useThemeContext");
+const { meta: { resolveSemanticColor } } = getByProps("colors", "meta");
+const UserProfileSection = getByName("UserProfileSection");
+const { ProfileGradientCard } = getByProps("ProfileGradientCard");
+
 const styles = StyleSheet.createThemedStyleSheet({
     container: {
-        marginTop: 12,
-        marginLeft: 12,
-        alignSelf: 'flex-start'
-    },
-    eyebrow: {
-        textTransform: 'uppercase',
-        fontSize: 12,
-        lineHeight: 16,
-        fontFamily: Constants.Fonts.PRIMARY_BOLD,
-        color: Constants.ThemeColorMap.TEXT_NORMAL,
-
-        marginBottom: 10
+        alignSelf: 'flex-start',
+        padding: 1,
+        borderRadius: 9,
+        marginTop: -4,
     },
     innerContainer: {
-        backgroundColor: Constants.ThemeColorMap.BACKGROUND_MOBILE_PRIMARY,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: Constants.ThemeColorMap.HEADER_PRIMARY,
-
-        overflow: 'hidden',
-        
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
+        paddingHorizontal: 6,
+        paddingVertical: 8,
+        overflow: "hidden",
+        flexDirection: "row",
         justifyContent: 'center',
+        alignItems: 'center',
     },
     circle: {
-        width: 12,
-        height: 12,
-        borderRadius: 12/2,
-        backgroundColor: Constants.ThemeColorMap.HEADER_PRIMARY,
-
-        marginLeft: 8,
+        width: 10,
+        height: 10,
+        borderRadius: 10/2,
         marginRight: 6
     },
-    content: {
-        fontSize: 14,
-        
-        paddingRight: 8,
-        paddingTop: 8,
-        paddingBottom: 8,
+    fallback: {
+        color: Constants.ThemeColorMap.BACKGROUND_SECONDARY_ALT
     },
     text: {
         fontFamily: Constants.Fonts.DISPLAY_NORMAL,
-        color: Constants.ThemeColorMap.TEXT_NORMAL
     }
 })
 
@@ -60,24 +45,26 @@ const styles = StyleSheet.createThemedStyleSheet({
  * @returns TSX Component
  */
 export default ({ pronoun }: { pronoun: string }) => {
-    return <View style={styles.container}>
-        <Text style={styles.eyebrow}>
-            Pronouns
-        </Text>
+    const themeContext = useThemeContext();
+    const textColor = resolveSemanticColor(themeContext.theme, Constants.ThemeColorMap.TEXT_NORMAL);
+
+    return <UserProfileSection title="Pronouns">
         <TouchableOpacity onPress={() => Toasts.open({
             content: pronoun,
             source: Icons.Pronoun
         })}>
             {getBoolean(manifest.name, "isRole", true) 
-                ? <View style={styles.innerContainer}>
-                    <View style={styles.circle} />
-                    <Text style={[styles.text, styles.content]}>
-                        {pronoun}
-                    </Text>
-                </View> 
-                : <Text style={[styles.text, { fontSize: 16 }]}>
+                ? <ProfileGradientCard style={styles.container} fallbackBackground={styles.fallback.color}>
+                    <View style={styles.innerContainer}>
+                        <View style={[styles.circle, { backgroundColor: textColor }]} />
+                        <Text style={[styles.text, { color: textColor }]}>
+                            {pronoun}
+                        </Text>
+                    </View>
+                </ProfileGradientCard> 
+                : <Text style={[styles.text, { fontSize: 16, color: textColor }]}>
                     {pronoun}
                 </Text>}
         </TouchableOpacity>
-    </View>
+    </UserProfileSection>
 }
