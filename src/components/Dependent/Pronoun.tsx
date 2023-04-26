@@ -15,7 +15,10 @@ const styles = StyleSheet.createThemedStyleSheet({
         alignSelf: 'flex-start',
         padding: 1,
         borderRadius: 9,
+        width: "100%",
+
         marginTop: -4,
+        marginRight: -12
     },
     innerContainer: {
         paddingHorizontal: 6,
@@ -39,20 +42,18 @@ const styles = StyleSheet.createThemedStyleSheet({
     }
 })
 
-/**
- * Main @Pronoun component implementation.
- * @param pronoun: The pronoun of the user, passed as a string
- * @returns TSX Component
- */
 export default ({ pronoun }: { pronoun: string }) => {
     const themeContext = useThemeContext();
     const textColor = resolveSemanticColor(themeContext.theme, Constants.ThemeColorMap.TEXT_NORMAL);
 
     return <UserProfileSection title="Pronouns">
-        <TouchableOpacity onPress={() => Toasts.open({
-            content: pronoun,
-            source: Icons.Pronoun
-        })}>
+        <TouchableOpacity 
+            onPress={() => Toasts.open({
+                content: pronoun,
+                source: Icons.Pronoun
+            })}
+            style={getBoolean(manifest.name, "isRole", true) ? { justifyContent: 'center', alignItems: 'center',} : {}}
+        >
             {getBoolean(manifest.name, "isRole", true) 
                 ? <ProfileGradientCard style={styles.container} fallbackBackground={styles.fallback.color}>
                     <View style={styles.innerContainer}>
