@@ -9,6 +9,7 @@ const { useThemeContext } = getByProps("useThemeContext");
 const { meta: { resolveSemanticColor } } = getByProps("colors", "meta");
 const UserProfileSection = getByName("UserProfileSection");
 const { ProfileGradientCard } = getByProps("ProfileGradientCard");
+const { triggerHaptic } = getByProps("triggerHaptic");
 
 const styles = StyleSheet.createThemedStyleSheet({
     container: {
@@ -48,10 +49,14 @@ export default ({ pronoun }: { pronoun: string }) => {
 
     return <UserProfileSection title="Pronouns">
         <TouchableOpacity 
-            onPress={() => Toasts.open({
-                content: pronoun,
-                source: Icons.Pronoun
-            })}
+            onPress={() => {
+                Toasts.open({
+                    content: pronoun,
+                    source: Icons.Pronoun
+                })
+
+                triggerHaptic();
+            }}
             style={getBoolean(manifest.name, "isRole", true) ? { justifyContent: 'center', alignItems: 'center',} : {}}
         >
             {getBoolean(manifest.name, "isRole", true) 
