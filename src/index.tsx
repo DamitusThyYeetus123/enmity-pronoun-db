@@ -12,7 +12,6 @@ import Pronoun from './components/Dependent/Pronoun';
 const Patcher = create("pronoun-db")
 
 const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET", "SECONDARY_INFO_TOP_MARGIN", "SIDE_PADDING")
-const UserProfileName = getByName("UserProfileName");
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
@@ -49,10 +48,8 @@ const PronounDB: Plugin = {
 
         Patcher.after(UserProfile.default, "type", (_, __, res) => {
             const profileCardSection = findInReactTree(res, r => 
-                r?.props?.children.find((res: any) => typeof res?.props?.displayProfile?.userId === "string")
-                && !r?.props.children.find((e: any) => e.type === UserProfileName)
-                && r?.type?.displayName === "View"
-                && Array.isArray(r?.props?.style)
+                r?.type?.displayName === "View" &&
+                r?.props?.children.findIndex(i => i?.type?.name === "UserProfileBio") !== -1
             )?.props?.children
 
             if (!profileCardSection) return res;
