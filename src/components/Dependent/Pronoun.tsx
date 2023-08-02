@@ -8,7 +8,7 @@ import manifest from "../../../manifest.json"
 const { useThemeContext } = getByProps("useThemeContext");
 const { meta: { resolveSemanticColor } } = getByProps("colors", "meta");
 const UserProfileSection = getByName("UserProfileSection");
-const { ProfileGradientCard } = getByProps("ProfileGradientCard");
+const { UserProfileGradientCard } = getByProps("UserProfileGradientCard");
 const { triggerHaptic } = getByProps("triggerHaptic");
 
 const styles = StyleSheet.createThemedStyleSheet({
@@ -60,14 +60,14 @@ export default ({ pronoun }: { pronoun: string }) => {
             style={getBoolean(manifest.name, "isRole", true) ? { justifyContent: 'center', alignItems: 'center',} : {}}
         >
             {getBoolean(manifest.name, "isRole", true) 
-                ? <ProfileGradientCard style={styles.container} fallbackBackground={styles.fallback.color}>
+                ? <UserProfileGradientCard style={styles.container} fallbackBackground={styles.fallback.color}>
                     <View style={styles.innerContainer}>
                         <View style={[styles.circle, { backgroundColor: textColor }]} />
                         <Text style={[styles.text, { color: textColor }]}>
                             {pronoun}
                         </Text>
                     </View>
-                </ProfileGradientCard> 
+                </UserProfileGradientCard> 
                 : <Text style={[styles.text, { fontSize: 16, color: textColor }]}>
                     {pronoun}
                 </Text>}
