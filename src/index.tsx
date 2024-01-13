@@ -11,7 +11,7 @@ import Pronoun from './components/Dependent/Pronoun';
 
 const Patcher = create("pronoun-db")
 
-const UserProfile = getModule(=> x?.type?.name == "UserProfile")
+const UserProfile = getModule(x => x?.type?.name == "UserProfile")
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
