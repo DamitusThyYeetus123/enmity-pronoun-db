@@ -1,7 +1,7 @@
-import { getByName, getByProps } from 'enmity/metro';
+import { getModule, getByName, getByProps } from 'enmity/metro';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
-import { Constants, React, StyleSheet } from 'enmity/metro/common';
+import { React, StyleSheet } from 'enmity/metro/common';
 import { getBoolean } from 'enmity/api/settings';
 import { PronounManager as PM, ArrayImplementations as ArrayOps } from './common';
 import manifest from "../manifest.json"
@@ -11,7 +11,7 @@ import Pronoun from './components/Dependent/Pronoun';
 
 const Patcher = create("pronoun-db")
 
-const UserProfile = getByProps("PRIMARY_INFO_TOP_OFFSET", "SECONDARY_INFO_TOP_MARGIN", "SIDE_PADDING")
+const UserProfile = getModule(=> x?.type?.name == "UserProfile")
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
@@ -46,7 +46,7 @@ const PronounDB: Plugin = {
             PM.updateQueuedPronouns();
         });
 
-        Patcher.after(UserProfile.default, "type", (_, __, res) => {
+        Patcher.after(UserProfile, "type", (_, __, res) => {
             const profileCardSection = findInReactTree(res, r => 
                 r?.type?.displayName === "View" &&
                 r?.props?.children.findIndex(i => i?.type?.name === "UserProfileBio") !== -1
