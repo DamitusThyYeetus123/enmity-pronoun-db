@@ -1,4 +1,4 @@
-import { getModule, getByName, getByProps } from 'enmity/metro';
+import { getByTypeName, getByName, getByProps } from 'enmity/metro';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
 import { React, StyleSheet } from 'enmity/metro/common';
@@ -11,7 +11,7 @@ import Pronoun from './components/Dependent/Pronoun';
 
 const Patcher = create("pronoun-db")
 
-const UserProfile = getModule(x => x?.type?.name == "UserProfile")
+const UserProfile = getByTypeName("UserProfile");
 const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
