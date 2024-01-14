@@ -11,8 +11,8 @@
       }
    ],
    "plugin": {
-      "download": "https://raw.githubusercontent.com/acquitelol/enmity-pronoun-db/main/dist/PronounDB.js",
-      "repo": "https://github.com/acquitelol/enmity-pronoun-db",
+      "download": "https://raw.githubusercontent.com/DamitusThyYeetus123/enmity-pronoun-db/main/dist/PronounDB.js",
+      "repo": "https://github.com/DamitusThyYeetus123/enmity-pronoun-db",
       "pronoundb": "https://pronoundb.org/",
       "build": "patch-1.4.56",
       "hash": "5c5391d6"
