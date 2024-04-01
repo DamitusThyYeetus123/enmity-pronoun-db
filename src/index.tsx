@@ -16,17 +16,6 @@ const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
 
-const styles = StyleSheet.createThemedStyleSheet({
-    opTagBackgroundColor: {
-        color: Constants.ThemeColorMap.HEADER_PRIMARY
-    },
-    opTagTextColor: {
-        color: Constants.ThemeColorMap.BACKGROUND_PRIMARY
-    },
-    mention: {
-        color: Constants.ThemeColorMap.BACKGROUND_MENTIONED_HOVER
-    }
-})
 
 const PronounDB: Plugin = {
     ...manifest,
