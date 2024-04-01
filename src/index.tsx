@@ -1,7 +1,7 @@
 import { getByTypeName, getByName, getByProps } from 'enmity/metro';
 import { Plugin, registerPlugin } from 'enmity/managers/plugins';
 import { create } from 'enmity/patcher';
-import { React, StyleSheet } from 'enmity/metro/common';
+import { Constants, React, StyleSheet } from 'enmity/metro/common';
 import { getBoolean } from 'enmity/api/settings';
 import { PronounManager as PM, ArrayImplementations as ArrayOps } from './common';
 import manifest from "../manifest.json"
@@ -16,6 +16,18 @@ const UserStore = getByProps("getUser");
 const ReactNative = getByProps("View") as typeof import("react-native");
 const { DCDChatManager } = ReactNative.NativeModules;
 
+
+const styles = StyleSheet.createThemedStyleSheet({
+    opTagBackgroundColor: {
+        color: Constants.ThemeColorMap.HEADER_PRIMARY
+    },
+    opTagTextColor: {
+        color: Constants.ThemeColorMap.BACKGROUND_PRIMARY
+    },
+    mention: {
+        color: Constants.ThemeColorMap.BACKGROUND_MENTIONED_HOVER
+    }
+})
 
 const PronounDB: Plugin = {
     ...manifest,
